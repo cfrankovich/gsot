@@ -1,0 +1,36 @@
+version: "3"
+
+services:
+  transmitter:
+    container_name: transmitter
+    build:
+      context: ./sub
+      dockerfile: Dockerfile
+    image: amra-sub-transmitter-image
+    volumes:
+      - ./sub:/root/workspace
+    tty: true
+    networks:
+      - my_network
+    ports:
+      - "65432:65432"
+    depends_on:
+      - receiver
+
+  receiver:
+    container_name: receiver
+    build:
+      context: ./gs
+      dockerfile: Dockerfile
+    image: amra-gs-receiver-image
+    volumes:
+      - ./gs:/root/workspace
+    tty: true
+    networks:
+      - my_network
+    ports:
+      - "12345:12345"
+
+networks:
+  my_network:
+    driver: bridge
