@@ -10,7 +10,7 @@
 class TCPClient {
     public:
         TCPClient(const std::string& ip, uint16_t port);
-        void sendData(const std::string& data) const;
+        void sendData(const char *buffer, size_t buffer_size) const;
         ~TCPClient();
 
     private:

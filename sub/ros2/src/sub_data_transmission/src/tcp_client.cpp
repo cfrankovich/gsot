@@ -32,8 +32,8 @@ TCPClient::TCPClient(const std::string& ip, uint16_t port) {
     freeaddrinfo(res); // Free the memory allocated by getaddrinfo
 }
 
-void TCPClient::sendData(const std::string& data) const {
-    send(socket_fd_, data.c_str(), data.length(), 0);
+void TCPClient::sendData(const char *buffer, size_t buffer_size) const {
+    send(socket_fd_, buffer, buffer_size, 0);
 }
 
 TCPClient::~TCPClient() {

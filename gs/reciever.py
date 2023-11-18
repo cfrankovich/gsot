@@ -1,4 +1,5 @@
 import socket
+import struct
 
 def start_server(host, port):
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
@@ -13,10 +14,11 @@ def start_server(host, port):
                 print(f"Connected by {addr}")
                 try:
                     while True:
-                        data = conn.recv(1024)
+                        data = conn.recv(72) # 9 bytes 
                         if not data:
                             break
-                        print("Received data:", data.decode())
+                        metric_data = struct.unpack('ddddddddq', data)
+                        print("Received MetricData:", metric_data)
                 except ConnectionResetError:
                     print("Connection reset by client")
                 except Exception as e:

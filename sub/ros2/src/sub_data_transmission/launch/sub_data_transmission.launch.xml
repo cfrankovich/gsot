@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<launch>
+    <node 
+        pkg="sub_data_transmission"
+        exec="metric_data_transmitter"
+        name="metric_data_transmitter"
+        output="screen"
+    />
+
+</launch>

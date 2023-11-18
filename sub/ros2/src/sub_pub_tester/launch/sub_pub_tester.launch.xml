@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<launch>
+    <node 
+        pkg="sub_pub_tester"
+        exec="battery_pub"
+        name="battery_pub"
+        output="screen"
+    />
+
+    <node 
+        pkg="sub_pub_tester"
+        exec="orientation_pub"
+        name="orientation_pub"
+        output="screen"
+    />
+
+    <node 
+        pkg="sub_pub_tester"
+        exec="speed_pub"
+        name="speed_pub"
+        output="screen"
+    />
+
+</launch>

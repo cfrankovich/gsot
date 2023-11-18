@@ -25,6 +25,7 @@ find_package(rosidl_default_generators REQUIRED)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/BatteryLevels.msg"
+  "msg/Orientation.msg"
   DEPENDENCIES std_msgs
 )
 
@@ -37,12 +38,34 @@ ament_target_dependencies(battery_pub
   std_msgs
 )
 
+add_executable(orientation_pub src/orientation_pub.cpp)
+ament_target_dependencies(orientation_pub
+  rclcpp
+  std_msgs
+)
+
+add_executable(speed_pub src/speed_pub.cpp)
+ament_target_dependencies(speed_pub
+  rclcpp
+  std_msgs
+)
+
 rosidl_target_interfaces(battery_pub
+  ${PROJECT_NAME} "rosidl_typesupport_cpp")
+
+rosidl_target_interfaces(orientation_pub
   ${PROJECT_NAME} "rosidl_typesupport_cpp")
 
 install(TARGETS
     battery_pub
+    orientation_pub
+    speed_pub
     DESTINATION lib/${PROJECT_NAME}
+)
+
+install(DIRECTORY
+  launch
+  DESTINATION share/${PROJECT_NAME}/
 )
 
 if(BUILD_TESTING)
