@@ -46,7 +46,7 @@ source install/setup.bash
 7. To test the transmitter by publishing messages to topics, you need to run the sub_pub_tester nodes:
 
 ```sh
-ros2 run sub_pub_tester <node_name>
+ros2 launch sub_pub_tester sub_pub_tester.launch.xml
 ```
 
 8. Prepare for data transmission by entering the `reciever` container:
@@ -68,7 +68,7 @@ python3 reciever.py
 docker exec -it transmitter bash
 source /opt/ros/foxy/setup.bash
 source /root/workspace/ros2/install/setup.bash
-ros2 run sub_data_transmission metric_data_transmitter
+ros2 launch sub_data_transmission sub_data_transmission.launch.xml
 ```
 
 11. To stop the containers run
