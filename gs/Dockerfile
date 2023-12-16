@@ -9,6 +9,11 @@ RUN apt update && apt install -y \
     software-properties-common \
     net-tools \
     iputils-ping \
+    python3-pip \
+    libgl1-mesa-glx \
+    libqt5x11extras5 \
     && apt clean
+
+RUN pip3 install opencv-python
 
 WORKDIR /root/workspace

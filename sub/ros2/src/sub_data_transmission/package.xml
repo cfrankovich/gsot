@@ -14,6 +14,10 @@
 
   <depend>sub_pub_tester</depend>
 
+  <depend>image_transport</depend>
+  <depend>opencv</depend>
+  <depend>sensor_msgs</depend>
+
   <export>
     <build_type>ament_cmake</build_type>
   </export>

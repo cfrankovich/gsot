@@ -13,7 +13,7 @@ services:
     networks:
       - my_network
     ports:
-      - "65432:65432"
+      - "12300:12300"
     depends_on:
       - receiver
 
@@ -25,11 +25,15 @@ services:
     image: amra-gs-receiver-image
     volumes:
       - ./gs:/root/workspace
+      #- /tmp/.X11-unix:/tmp/.X11-unix
     tty: true
     networks:
       - my_network
     ports:
-      - "12345:12345"
+      - "12301:12301" # metric
+      - "12302:12302" # video
+    #environment:
+    #- DISPLAY=host.docker.internal:0
 
 networks:
   my_network:

@@ -7,4 +7,11 @@
         output="screen"
     />
 
+    <node 
+        pkg="sub_data_transmission"
+        exec="camera_data_transmitter"
+        name="camera_data_transmitter"
+        output="screen"
+    />
+
 </launch>

@@ -21,4 +21,11 @@
         output="screen"
     />
 
+    <node 
+        pkg="sub_pub_tester"
+        exec="camera_data_pub"
+        name="camera_data_pub"
+        output="screen"
+    />
+
 </launch>
