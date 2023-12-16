@@ -18,7 +18,7 @@ This repository is the development hub for our Ground Station Software. The repo
 docker-compose up -d --build
 ```
 
-3. To enter the `transmitter` container, use the following command:
+3. Enter the `transmitter` container:
 
 ```sh
 docker exec -it transmitter bash
@@ -37,13 +37,13 @@ source /opt/ros/foxy/setup.bash
 colcon build
 ```
 
-6. Source the newly built environment before running anything:
+6. Source the newly built environment _before_ running anything:
 
 ```sh
 source install/setup.bash
 ```
 
-7. To test the transmitter by publishing messages to topics, you need to run the sub_pub_tester nodes:
+7. To test the transmitter, launch the `sub_pub_tester` nodes:
 
 ```sh
 ros2 launch sub_pub_tester sub_pub_tester.launch.xml
@@ -55,14 +55,17 @@ ros2 launch sub_pub_tester sub_pub_tester.launch.xml
 docker exec -it receiver bash
 ```
 
-9. Once inside the `reciever` container, navigate to the workspace and run the python script:
+9. Once inside the `reciever` container, navigate to the workspace and run the following python scripts:
 
 ```sh
 cd /root/workspace
-python3 reciever.py
+python3 metric_data_reciever.py
+python3 camera_data_reciever.py
 ```
 
-10. Finally, in a new terminal session, enter the `transmitter` container again and run the `sub_transmitter` (make sure to source the environments again):
+**Note:** When running the `camera_data_receiver` script, be aware that displaying video streams through Docker requires additional setup for GUI forwarding.
+
+10. Finally, in a new terminal session, enter the `transmitter` container again and launch the `sub_transmitter` nodes (make sure to source the environments):
 
 ```sh
 docker exec -it transmitter bash
