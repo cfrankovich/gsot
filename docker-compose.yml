@@ -2,13 +2,13 @@ version: "3"
 
 services:
   transmitter:
-    container_name: transmitter
+    container_name: agent
     build:
-      context: ./sub
+      context: ./agent
       dockerfile: Dockerfile
-    image: amra-sub-transmitter-image
+    image: agent-image
     volumes:
-      - ./sub:/root/workspace
+      - ./agent:/root/workspace
     tty: true
     networks:
       - my_network
@@ -18,13 +18,13 @@ services:
       - receiver
 
   receiver:
-    container_name: receiver
+    container_name: client
     build:
-      context: ./gs
+      context: ./client
       dockerfile: Dockerfile
-    image: amra-gs-receiver-image
+    image: client-image
     volumes:
-      - ./gs:/root/workspace
+      - ./client:/root/workspace
       #- /tmp/.X11-unix:/tmp/.X11-unix
     tty: true
     networks:

@@ -12,7 +12,7 @@ class CameraPublisher: public rclcpp::Node
             node_handle(std::shared_ptr<CameraPublisher>(this, [](auto *) {})),
             it(node_handle),
             publisher(it.advertise("video/frame", 1)),
-            cap("/root/workspace/ros2/src/sub_pub_tester/src/sample-video.mp4")
+            cap("/root/workspace/ros2/src/pub_tester/src/sample-video.mp4")
         {
 
             timer = this->create_wall_timer(period, std::bind(&CameraPublisher::timer_callback, this)); 

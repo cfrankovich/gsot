@@ -6,9 +6,9 @@
 
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/float64.hpp"
-#include "sub_data_transmission/tcp_client.hpp"
-#include "sub_pub_tester/msg/battery_levels.hpp"
-#include "sub_pub_tester/msg/orientation.hpp"
+#include "gsot/tcp_client.hpp"
+#include "pub_tester/msg/battery_levels.hpp"
+#include "pub_tester/msg/orientation.hpp"
 
 struct MetricData 
 {
@@ -38,13 +38,13 @@ class MetricDataTransmitter: public rclcpp::Node
         metric_data(),
         tcp_client("receiver", 12301)
         {
-            battery_levels_subscription = this->create_subscription<sub_pub_tester::msg::BatteryLevels>(
+            battery_levels_subscription = this->create_subscription<pub_tester::msg::BatteryLevels>(
                 "battery_levels", 
                 10,
                 std::bind(&MetricDataTransmitter::battery_levels_callback, this, std::placeholders::_1)
             );
 
-            orientation_subscription = this->create_subscription<sub_pub_tester::msg::Orientation>(
+            orientation_subscription = this->create_subscription<pub_tester::msg::Orientation>(
                 "orientation",
                 10,
                 std::bind(&MetricDataTransmitter::orientation_callback, this, std::placeholders::_1)
@@ -60,7 +60,7 @@ class MetricDataTransmitter: public rclcpp::Node
         }
 
     private:
-        void battery_levels_callback(const sub_pub_tester::msg::BatteryLevels::SharedPtr msg) const 
+        void battery_levels_callback(const pub_tester::msg::BatteryLevels::SharedPtr msg) const 
         {
             std::lock_guard<std::mutex> lock(data_mutex);
             metric_data.battery0 = msg->battery0;
@@ -69,7 +69,7 @@ class MetricDataTransmitter: public rclcpp::Node
             metric_data.battery3 = msg->battery3;
         }
 
-        void orientation_callback(const sub_pub_tester::msg::Orientation::SharedPtr msg) const
+        void orientation_callback(const pub_tester::msg::Orientation::SharedPtr msg) const
         {
             std::lock_guard<std::mutex> lock(data_mutex);
             metric_data.pitch = msg->pitch;
@@ -83,8 +83,8 @@ class MetricDataTransmitter: public rclcpp::Node
             metric_data.speed = msg->data;
         }
 
-        rclcpp::Subscription<sub_pub_tester::msg::BatteryLevels>::SharedPtr battery_levels_subscription;
-        rclcpp::Subscription<sub_pub_tester::msg::Orientation>::SharedPtr orientation_subscription;
+        rclcpp::Subscription<pub_tester::msg::BatteryLevels>::SharedPtr battery_levels_subscription;
+        rclcpp::Subscription<pub_tester::msg::Orientation>::SharedPtr orientation_subscription;
         rclcpp::Subscription<std_msgs::msg::Float64>::SharedPtr speed_subscription; 
 
         mutable MetricData metric_data;

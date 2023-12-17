@@ -5,7 +5,7 @@
 #include <iomanip>
 
 #include "rclcpp/rclcpp.hpp"
-#include "sub_data_transmission/udp_client.hpp"
+#include "gsot/udp_client.hpp"
 #include <opencv2/opencv.hpp>
 #include <opencv2/videoio.hpp> 
 #include "cv_bridge/cv_bridge.h"

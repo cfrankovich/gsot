@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(sub_data_transmission)
+project(gsot)
 
 # Default to C++17
 if(NOT CMAKE_CXX_STANDARD)
@@ -16,7 +16,7 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
-find_package(sub_pub_tester REQUIRED)
+find_package(pub_tester REQUIRED)
 find_package(image_transport REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(cv_bridge REQUIRED)
@@ -30,12 +30,12 @@ INCLUDE_DIRECTORIES(
 
 # executables
 add_executable(metric_data_transmitter src/metric_data_transmitter.cpp src/tcp_client.cpp)
-ament_target_dependencies(metric_data_transmitter rclcpp std_msgs sub_pub_tester)
+ament_target_dependencies(metric_data_transmitter rclcpp std_msgs pub_tester)
 
 add_executable(camera_data_transmitter src/camera_data_transmitter.cpp src/udp_client.cpp)
 ament_target_dependencies(camera_data_transmitter 
     rclcpp 
-    sub_pub_tester
+    pub_tester
     image_transport
     cv_bridge
     sensor_msgs

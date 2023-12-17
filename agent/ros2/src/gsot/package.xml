@@ -1,18 +1,18 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>sub_data_transmission</name>
-  <description>The sub_data_transmission package provides a means for transmitting real-time camera feeds and metric data from autonomous submarine vehicles to ground stations or other network endpoints.</description>
+  <name>gsot</name>
+  <description>The gsot package provides a means for transmitting real-time camera feeds and metric data.</description>
   <version>0.0.0</version>
   <license>TODO</license>
-  <maintainer email="robosub@teamunsinkable.org">teamunsinkable</maintainer>
+  <maintainer email="carson@frankovich.dev">cfrankovich</maintainer>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
 
-  <depend>sub_pub_tester</depend>
+  <depend>pub_tester</depend>
 
   <depend>image_transport</depend>
   <depend>opencv</depend>

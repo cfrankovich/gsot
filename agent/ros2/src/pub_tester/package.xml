@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>sub_pub_tester</name>
-  <description>The sub_pub_test package is designed to facilitate testing of the data publishing mechanisms of an autonomous submarine.</description>
+  <name>pub_tester</name>
+  <description>The pub_test package is designed to facilitate testing data publishing mechanisms.</description>
   <version>0.0.0</version>
   <license>TODO</license>
-  <maintainer email="robosub@teamunsinkable.org">teamunsinkable</maintainer>
+  <maintainer email="carson@frankovich.dev">cfrankovich</maintainer>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
