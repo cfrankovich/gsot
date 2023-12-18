@@ -1,5 +1,6 @@
 # Custom
 sample-video.mp4
+*.docx
 
 # Ignore build and install folders
 build/
