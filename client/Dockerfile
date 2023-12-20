@@ -4,16 +4,14 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt update && apt install -y \
     curl \
-    lsb-release \
     gnupg2 \
     software-properties-common \
-    net-tools \
-    iputils-ping \
-    python3-pip \
-    libgl1-mesa-glx \
-    libqt5x11extras5 \
     && apt clean
 
-RUN pip3 install opencv-python
+RUN curl -sL https://deb.nodesource.com/setup_20.x | bash -
+
+RUN apt install -y nodejs nginx
 
 WORKDIR /root/workspace
+
+EXPOSE 3000 
