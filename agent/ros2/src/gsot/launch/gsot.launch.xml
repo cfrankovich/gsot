@@ -14,4 +14,11 @@
         output="screen"
     />
 
+    <node 
+        pkg="gsot"
+        exec="config_data_transmitter"
+        name="config_data_transmitter"
+        output="screen"
+    />
+
 </launch>

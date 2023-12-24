@@ -44,10 +44,13 @@ target_link_libraries(camera_data_transmitter
   ${OpenCV_LIBRARIES}
 )
 
+add_executable(config_data_transmitter src/config_data_transmitter.cpp src/tcp_client.cpp)
+ament_target_dependencies(config_data_transmitter rclcpp)
 
 install(TARGETS
   metric_data_transmitter
   camera_data_transmitter
+  config_data_transmitter
   DESTINATION lib/${PROJECT_NAME}
 )
 

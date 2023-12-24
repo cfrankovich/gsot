@@ -6,11 +6,13 @@
 #include <netinet/in.h>
 #include <unistd.h>
 #include <arpa/inet.h>
+#include <functional>
 
 class TCPClient {
     public:
         TCPClient(const std::string& ip, uint16_t port);
         void sendData(const char *buffer, size_t buffer_size) const;
+        void receiveData(std::function<void(const std::string &)> callback) const;
         ~TCPClient();
 
     private:

@@ -36,6 +36,15 @@ void TCPClient::sendData(const char *buffer, size_t buffer_size) const {
     send(socket_fd_, buffer, buffer_size, 0);
 }
 
+void TCPClient::receiveData(std::function<void(const std::string &)> callback) const {
+    char buffer[1024] = {0};
+    int bytes_read = read(socket_fd_, buffer, 1024);
+    if (bytes_read > 0) {
+        std::string message(buffer, bytes_read);
+        callback(message);
+    }
+}
+
 TCPClient::~TCPClient() {
     if (socket_fd_ != -1) {
         close(socket_fd_);
