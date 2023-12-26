@@ -1,4 +1,51 @@
 * {
-  padding: 0;
-  margin: 0;
+    padding: 0;
+    margin: 0;
+}
+
+:root {
+    --primary-color: #000;
+    --secondary-color: #fff;
+    --sidebar-width: 250px;
+    --text-size: 20px;
+}
+
+body {
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+}
+
+p,
+a,
+li {
+    font-size: var(--text-size);
+}
+
+.sidebar {
+    border-right: 1px solid var(--secondary-color);
+    width: var(--sidebar-width);
+    height: 100%;
+    position: fixed;
+}
+
+.sidebar-child {
+    border-bottom: 1px solid var(--secondary-color);
+}
+
+.content {
+    margin-left: var(--sidebar-width);
+}
+
+.config-help-container {
+    display: flex;
+}
+
+.left,
+.right {
+    flex: 1;
+    text-align: center;
+}
+
+.right {
+    border-left: 1px solid var(--secondary-color);
 }
