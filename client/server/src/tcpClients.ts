@@ -46,14 +46,23 @@ function startConfigTCPServer() {
 function sendConfigRequest(message: string): Promise<string> {
     return new Promise((resolve, reject) => {
         if (configSocket) {
+            const timeout = setTimeout(() => {
+                configSocket?.removeAllListeners();
+                reject("Config request timed out");
+            }, 5000); // 5 second timeout
+
             configSocket.write(message);
 
-            configSocket.on("data", (data) => {
+            configSocket.once("data", (data) => {
+                clearTimeout(timeout);
                 resolve(data.toString());
+                configSocket?.removeAllListeners("error");
             });
 
             configSocket.on("error", (err) => {
+                clearTimeout(timeout);
                 console.error("Config TCP Client Eerror: ", err);
+                configSocket?.removeAllListeners("data");
                 reject(err);
             });
         } else {
