@@ -2,8 +2,9 @@
 #include <stdexcept>
 #include <cstring>
 #include <netdb.h> 
+#include <rclcpp/rclcpp.hpp>
 
-TCPClient::TCPClient(const std::string& ip, uint16_t port) {
+TCPClient::TCPClient(const std::string& ip, uint16_t port, rclcpp::Logger logger) : logger_(logger) {
     // Create socket
     socket_fd_ = socket(AF_INET, SOCK_STREAM, 0);
     if (socket_fd_ == -1) {
@@ -37,11 +38,19 @@ void TCPClient::sendData(const char *buffer, size_t buffer_size) const {
 }
 
 void TCPClient::receiveData(std::function<void(const std::string &)> callback) const {
-    char buffer[1024] = {0};
-    int bytes_read = read(socket_fd_, buffer, 1024);
-    if (bytes_read > 0) {
-        std::string message(buffer, bytes_read);
-        callback(message);
+    while (true) {
+        char buffer[1024] = {0};
+        int bytes_read = read(socket_fd_, buffer, 1024);
+        if (bytes_read > 0) {
+            std::string message(buffer, bytes_read);
+            RCLCPP_INFO(logger_, "Data reads %s", message.c_str());
+            callback(message);
+        } else if (bytes_read == 0) {
+            RCLCPP_INFO(logger_, "Connection closed by peer.");
+        } else {
+            RCLCPP_ERROR(logger_, "Error reading from socket: %s", strerror);
+            break;
+        }
     }
 }
 
