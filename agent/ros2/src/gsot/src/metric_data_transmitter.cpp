@@ -36,7 +36,7 @@ class MetricDataTransmitter: public rclcpp::Node
         MetricDataTransmitter() 
         : Node("metric_data_transmitter"), 
         metric_data(),
-        tcp_client("receiver", 12301)
+        tcp_client("receiver", 12301, get_logger())
         {
             battery_levels_subscription = this->create_subscription<pub_tester::msg::BatteryLevels>(
                 "battery_levels", 

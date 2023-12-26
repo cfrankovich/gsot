@@ -10,7 +10,7 @@ class ConfigDataTransmitter: public rclcpp::Node
     public:
         ConfigDataTransmitter()
         : Node("config_data_transmitter"),
-        tcp_client("receiver", 12303)
+        tcp_client("receiver", 12303, get_logger())
         {
             std::thread([this]() {
                 tcp_client.receiveData([this](const std::string &message) {
