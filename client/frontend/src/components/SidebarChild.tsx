@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 type SideBarChildProps = {
     name: string;
@@ -7,7 +8,7 @@ type SideBarChildProps = {
 const SidebarChild: React.FC<SideBarChildProps> = (props) => {
     return (
         <div className="sidebar-child">
-            <p>{props.name}</p>
+            <Link to={`/topic${props.name}`}>{props.name}</Link>
         </div>
     );
 };

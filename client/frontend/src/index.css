@@ -49,3 +49,16 @@ li {
 .right {
     border-left: 1px solid var(--secondary-color);
 }
+
+.viewer {
+    margin-left: var(--sidebar-width);
+    padding-left: 4px;
+}
+
+a {
+    color: var(--secondary-color);
+}
+
+a:visited {
+    color: var(--secondary-color);
+}
