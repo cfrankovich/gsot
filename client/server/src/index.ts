@@ -4,10 +4,13 @@ import {
     sendConfigRequest,
     startConfigTCPServer,
 } from "./tcpClients";
+import { initializeLogger } from "./logger";
 
 const express = require("express");
-const app = express();
 const port = 8080;
+
+const app = express();
+app.use(express.json());
 
 startConfigTCPServer();
 startMetricDataTCPServer();
@@ -19,6 +22,16 @@ app.get("/get-topics", async (_req: Request, res: Response) => {
     } catch (err) {
         console.error("Error getting topics: ", err);
         res.status(500).send("Failed to retrieve topics.");
+    }
+});
+
+app.post("/update-log-file", async (req: Request, res: Response) => {
+    try {
+        await initializeLogger(req.body.logDirPrefix, req.body.topics);
+        res.status(200);
+    } catch (err) {
+        console.error("Error initializing logger: ", err);
+        res.status(500).send("Error initializing logger.");
     }
 });
 

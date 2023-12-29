@@ -1,6 +1,7 @@
 import { Socket, createConnection } from "net";
 import { config } from "process";
 const net = require("net");
+import { logData } from "./logger";
 
 const METRIC_TCP_PORT = 12301;
 const CONFIG_TCP_PORT = 12303;
@@ -11,7 +12,7 @@ function startMetricDataTCPServer() {
         console.log("Metric Data TCP Client Connected");
 
         socket.on("data", (data) => {
-            processMetricData(data);
+            logData(data);
         });
 
         socket.on("end", () => {
@@ -25,8 +26,6 @@ function startMetricDataTCPServer() {
         );
     });
 }
-
-function processMetricData(data: Buffer) {}
 
 function startConfigTCPServer() {
     const tcpServer = net.createServer((socket: Socket) => {
