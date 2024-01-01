@@ -21,4 +21,11 @@
         output="screen"
     />
 
+    <node
+        pkg="gsot"
+        exec="metric_data_helper.py"
+        name="metric_data_helper"
+        output="screen"
+    />
+
 </launch>

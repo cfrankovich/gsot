@@ -16,11 +16,12 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
-find_package(pub_tester REQUIRED)
 find_package(image_transport REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(cv_bridge REQUIRED)
 find_package(sensor_msgs REQUIRED)
+find_package(ament_cmake_python REQUIRED)
+find_package(rclpy REQUIRED)
 
 # include
 INCLUDE_DIRECTORIES(
@@ -29,13 +30,18 @@ INCLUDE_DIRECTORIES(
 )
 
 # executables
+ament_python_install_package(gsot)
+install (PROGRAMS
+    scripts/metric_data_helper.py
+    DESTINATION lib/gsot
+)
+
 add_executable(metric_data_transmitter src/metric_data_transmitter.cpp src/tcp_client.cpp)
-ament_target_dependencies(metric_data_transmitter rclcpp std_msgs pub_tester)
+ament_target_dependencies(metric_data_transmitter rclcpp std_msgs)
 
 add_executable(camera_data_transmitter src/camera_data_transmitter.cpp src/udp_client.cpp)
 ament_target_dependencies(camera_data_transmitter 
     rclcpp 
-    pub_tester
     image_transport
     cv_bridge
     sensor_msgs
