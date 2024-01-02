@@ -32,32 +32,52 @@ function initializeLogger(newPrefix: string, topics: string[]): Promise<void> {
                 reject(err);
                 return;
             }
-        });
-
-        wsMap = {};
-        try {
-            topics.forEach((topic) => {
-                const topicNoSlashes = topic.replace("/", "-"); // either this or sub directories
-                const filePath = path.join(
-                    dirPath,
-                    `${topicNoSlashes}-${timestamp}.log`
-                );
-                wsMap[filePath] = fs.createWriteStream(filePath, {
-                    flags: "a",
+            wsMap = {};
+            try {
+                topics.forEach((topic) => {
+                    const topicNoSlashes = topic
+                        .replace(/\//g, "--")
+                        .substring(2);
+                    const filePath = path.join(
+                        dirPath,
+                        `${topicNoSlashes}.log`
+                    );
+                    wsMap[topicNoSlashes] = fs.createWriteStream(filePath, {
+                        flags: "a",
+                    });
                 });
-            });
-
-            loggerActive = true;
-            resolve();
-        } catch (err) {
-            reject(err);
-        }
+                loggerActive = true;
+                resolve();
+            } catch (err) {
+                reject(err);
+            }
+        });
     });
 }
 
 function logData(data: Buffer) {
     if (!loggerActive) return;
-    // TODO: log data
+
+    const timestamp = Date.now().toString();
+    const dataArray = data.toString().split("\n");
+    let sortedTopics = Object.keys(wsMap).sort();
+    sortedTopics.shift(); // no "overview"
+
+    console.log(`DATA ARRAY ${dataArray}`);
+    console.log(`SORTED TOPICS ${sortedTopics}`);
+
+    if (dataArray.length !== sortedTopics.length) {
+        console.error("Mismatch between data buffer and topics.");
+        return;
+    }
+
+    for (let i = 0; i < sortedTopics.length; i++) {
+        const topic = sortedTopics[i];
+        const data = dataArray[i];
+        const ws = wsMap[topic];
+
+        if (ws) ws.write(`[${timestamp}]\t${data}\n`);
+    }
 }
 
 export { initializeLogger, logData };
