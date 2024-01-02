@@ -35,7 +35,7 @@ class MetricDataHelper(Node):
     def publish_buffer(self):
         sorted_topics = sorted(self.pub_buffer.keys())
         aggregated_data = '\n'.join(self.pub_buffer[topic] for topic in sorted_topics)
-        self.log(aggregated_data)
+        #self.log(aggregated_data)
         self.publisher.publish(String(data=aggregated_data))
         self.pub_buffer.clear()
 
