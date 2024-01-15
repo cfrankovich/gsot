@@ -1,6 +1,7 @@
 #include "rclcpp/rclcpp.hpp"
 #include "gsot/tcp_client.hpp"
 #include "std_msgs/msg/string.hpp"
+#include <signal.h>
 
 class MetricDataTransmitter: public rclcpp::Node 
 {
@@ -31,6 +32,7 @@ class MetricDataTransmitter: public rclcpp::Node
 
 int main(int argc, char* argv[]) 
 {
+    signal(SIGPIPE, SIG_IGN); // ignore `SIGPIPE` signal
     rclcpp::init(argc, argv);
     rclcpp::spin(std::make_shared<MetricDataTransmitter>());
     rclcpp::shutdown();
