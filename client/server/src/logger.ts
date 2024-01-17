@@ -1,9 +1,11 @@
 import path from "path";
 import fs from "fs";
 import os from "os";
+const readline = require("readline");
 
 const loggerDir = path.join(os.homedir(), "gsot_logs/");
 let loggerActive = false;
+let dirPath = "";
 
 type WriteStreamMap = {
     [key: string]: fs.WriteStream;
@@ -19,6 +21,58 @@ function getFormattedDate() {
     return `${month}-${day}-${year}`;
 }
 
+function readLastLineOfFile(filePath: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+        const readStream = fs.createReadStream(filePath);
+
+        const rl = readline.createInterface({
+            input: readStream,
+            crlfDelay: Infinity,
+        });
+
+        let lastLine = "";
+
+        rl.on("line", (line: string) => {
+            lastLine = line;
+        });
+
+        rl.on("close", () => {
+            resolve(lastLine);
+        });
+
+        rl.on("error", (error: Error) => {
+            reject(error);
+        });
+    });
+}
+
+async function getTopicData(topic: string): Promise<string> {
+    if (!loggerActive || topic === undefined) {
+        return new Promise((_resolve, reject) => {
+            reject("Logger is not active or topic is undefined.");
+        });
+    }
+    const topicNoSlashes = topic.replace(/\//g, "--");
+
+    if (wsMap[topicNoSlashes] === undefined) {
+        return new Promise((_resolve, reject) => {
+            reject("Topic not found in write stream map.");
+        });
+    }
+
+    try {
+        const filePath = path.join(dirPath, `${topicNoSlashes}.log`);
+        const lastLine = await readLastLineOfFile(filePath);
+        return new Promise((resolve, _reject) => {
+            resolve(lastLine);
+        });
+    } catch (error) {
+        return new Promise((_resolve, reject) => {
+            reject("Error reading log file.");
+        });
+    }
+}
+
 function initializeLogger(newPrefix: string, topics: string[]): Promise<void> {
     return new Promise((resolve, reject) => {
         if (newPrefix === "") {
@@ -26,9 +80,10 @@ function initializeLogger(newPrefix: string, topics: string[]): Promise<void> {
         }
 
         const timestamp = Date.now().toString();
-        const dirPath = path.join(loggerDir, newPrefix + "-" + timestamp);
+        dirPath = path.join(loggerDir, newPrefix + "-" + timestamp);
         fs.mkdir(dirPath, { recursive: true }, (err) => {
             if (err) {
+                dirPath = "";
                 reject(err);
                 return;
             }
@@ -49,6 +104,8 @@ function initializeLogger(newPrefix: string, topics: string[]): Promise<void> {
                 loggerActive = true;
                 resolve();
             } catch (err) {
+                dirPath = "";
+                wsMap = {};
                 reject(err);
             }
         });
@@ -62,9 +119,6 @@ function logData(data: Buffer) {
     const dataArray = data.toString().split("\n");
     let sortedTopics = Object.keys(wsMap).sort();
     sortedTopics.shift(); // no "overview"
-
-    console.log(`DATA ARRAY ${dataArray}`);
-    console.log(`SORTED TOPICS ${sortedTopics}`);
 
     if (dataArray.length !== sortedTopics.length) {
         console.error("Mismatch between data buffer and topics.");
@@ -80,4 +134,4 @@ function logData(data: Buffer) {
     }
 }
 
-export { initializeLogger, logData };
+export { initializeLogger, logData, getTopicData };

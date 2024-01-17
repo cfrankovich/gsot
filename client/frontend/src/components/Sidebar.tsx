@@ -31,7 +31,6 @@ function getStatusColor(status: Status): string {
 const Sidebar: React.FC = () => {
     const [status, setStatus] = useState<Status>(Status.NotConnected);
     const [topics, setTopics] = useState<string[]>([]);
-    const [logFileName, setLogFileName] = useState<string>("");
     const [loggerStatus, setLoggerStatus] = useState<boolean>(false);
 
     const requestAllTopics = () => {
@@ -87,9 +86,10 @@ const Sidebar: React.FC = () => {
                 topics: topics,
             })
             .then((res) => {
-                setLogFileName(res.data);
+                setLoggerStatus(true);
             })
-            .catch((err) => {
+            .catch((_err) => {
+                setLoggerStatus(false);
                 alert("Failed to update log file.");
             });
         logDirPrefixInputRef.current.value = "";

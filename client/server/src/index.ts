@@ -4,7 +4,7 @@ import {
     sendConfigRequest,
     startConfigTCPServer,
 } from "./tcpClients";
-import { initializeLogger } from "./logger";
+import { initializeLogger, getTopicData } from "./logger";
 
 const express = require("express");
 const port = 8080;
@@ -28,10 +28,24 @@ app.get("/get-topics", async (_req: Request, res: Response) => {
 app.post("/update-log-file", async (req: Request, res: Response) => {
     try {
         await initializeLogger(req.body.logDirPrefix, req.body.topics);
-        res.status(200);
+        res.status(200).send("Logger initialized.");
     } catch (err) {
         console.error("Error initializing logger: ", err);
         res.status(500).send("Error initializing logger.");
+    }
+});
+
+app.get("/get-topic-data", async (req: Request, res: Response) => {
+    const topic = req.query.topic;
+    if (typeof topic === "string") {
+        try {
+            const topicData = await getTopicData(topic);
+            res.send(topicData);
+        } catch (err) {
+            res.status(500).send("Error reading topic data.");
+        }
+    } else {
+        res.status(400).send("invalid topic parameter.");
     }
 });
 
