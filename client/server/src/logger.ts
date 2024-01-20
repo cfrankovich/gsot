@@ -130,7 +130,7 @@ function logData(data: Buffer) {
         const data = dataArray[i];
         const ws = wsMap[topic];
 
-        if (ws) ws.write(`[${timestamp}]\t${data}\n`);
+        if (ws) ws.write(`${timestamp}\t${data}\n`);
     }
 }
 
