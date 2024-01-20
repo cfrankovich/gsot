@@ -3,8 +3,14 @@ import {
     startMetricDataTCPServer,
     sendConfigRequest,
     startConfigTCPServer,
+    stopTCPServers,
 } from "./tcpClients";
-import { initializeLogger, getTopicData } from "./logger";
+import {
+    initializeLogger,
+    getTopicData,
+    stopLogger,
+    getLoggerStatus,
+} from "./logger";
 
 const express = require("express");
 const port = 8080;
@@ -46,6 +52,31 @@ app.get("/get-topic-data", async (req: Request, res: Response) => {
         }
     } else {
         res.status(400).send("invalid topic parameter.");
+    }
+});
+
+app.post("/stop-everything", async (_req: Request, res: Response) => {
+    try {
+        stopTCPServers();
+    } catch (err) {
+        res.status(500).send("Error stopping TCP servers.");
+    }
+
+    try {
+        stopLogger();
+    } catch (err) {
+        res.status(500).send("Error stopping logger.");
+    }
+
+    res.status(200).send("Reset TCP servers and stopped logger.");
+});
+
+app.get("/logger-status", async (req: Request, res: Response) => {
+    try {
+        const ls: Boolean = getLoggerStatus();
+        res.status(200).send(ls);
+    } catch (err) {
+        res.status(500).send("Error getting logger status.");
     }
 });
 

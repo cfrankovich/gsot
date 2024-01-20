@@ -134,4 +134,19 @@ function logData(data: Buffer) {
     }
 }
 
-export { initializeLogger, logData, getTopicData };
+function stopLogger() {
+    loggerActive = false;
+
+    Object.values(wsMap).forEach((ws) => {
+        ws.end(); // Close the write streams
+    });
+
+    dirPath = "";
+    wsMap = {};
+}
+
+function getLoggerStatus(): Boolean {
+    return loggerActive;
+}
+
+export { initializeLogger, logData, getTopicData, stopLogger, getLoggerStatus };

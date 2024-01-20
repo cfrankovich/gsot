@@ -1,14 +1,15 @@
-import { Socket, createConnection } from "net";
+import { Socket, createServer, Server } from "net";
 import { config } from "process";
-const net = require("net");
 import { logData } from "./logger";
 
 const METRIC_TCP_PORT = 12301;
 const CONFIG_TCP_PORT = 12303;
 let configSocket: Socket | null = null;
+let metricServer: Server | null = null;
+let configServer: Server | null = null;
 
 function startMetricDataTCPServer() {
-    const tcpServer = net.createServer((socket: Socket) => {
+    const tcpServer = createServer((socket: Socket) => {
         console.log("Metric Data TCP Client Connected");
 
         socket.on("data", (data) => {
@@ -28,7 +29,7 @@ function startMetricDataTCPServer() {
 }
 
 function startConfigTCPServer() {
-    const tcpServer = net.createServer((socket: Socket) => {
+    const tcpServer = createServer((socket: Socket) => {
         console.log("Config TCP Client Connected");
         configSocket = socket;
 
@@ -70,4 +71,30 @@ function sendConfigRequest(message: string): Promise<string> {
     });
 }
 
-export { startMetricDataTCPServer, startConfigTCPServer, sendConfigRequest };
+function stopTCPServers() {
+    if (metricServer) {
+        metricServer.close(() => {
+            console.log("Metric Data TCP Server closed");
+            metricServer = null;
+        });
+    }
+
+    if (configServer) {
+        configServer.close(() => {
+            console.log("Config TCP Server closed");
+            configServer = null;
+        });
+    }
+
+    if (configSocket) {
+        configSocket.end();
+        configSocket = null;
+    }
+}
+
+export {
+    startMetricDataTCPServer,
+    startConfigTCPServer,
+    sendConfigRequest,
+    stopTCPServers,
+};

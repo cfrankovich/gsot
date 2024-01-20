@@ -10,7 +10,7 @@ type TopicViewProps = {
 function formatTimeDifference(
     timestamp1: number,
     timestamp2: number,
-    decimalPlaces: number = 2
+    decimalPlaces: number = 0
 ): string {
     const timeDifference = (timestamp2 - timestamp1) / 1000;
     const formattedTime = timeDifference.toFixed(decimalPlaces);
@@ -29,6 +29,7 @@ const TopicView: React.FC<TopicViewProps> = (props) => {
         labels: [],
         datasets: [],
     });
+    const [loggerStatus, setLoggerStatus] = useState<Boolean>(false);
 
     const updateStartTime = (newTime: number) => {
         if (startTime !== undefined || labels.length > 0) return;
@@ -100,9 +101,21 @@ const TopicView: React.FC<TopicViewProps> = (props) => {
         return () => clearInterval(interval);
     }, [props.topic, chartData.labels]);
 
+    useEffect(() => {
+        axios
+            .get("/logger-status")
+            .then((res) => {
+                setLoggerStatus(res.data);
+            })
+            .catch((err) => {
+                console.log("Error fetching logger status.");
+            });
+    });
+
     return (
         <div className="viewer">
-            <LineChart data={chartData} />
+            {!loggerStatus && <p>Logger is not active.</p>}
+            {loggerStatus && <LineChart data={chartData} />}
         </div>
     );
 };

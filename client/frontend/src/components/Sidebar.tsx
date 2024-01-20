@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import SidebarChild from "./SidebarChild";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
 enum Status {
     NotConnected = "not connected",
@@ -46,7 +47,7 @@ const Sidebar: React.FC = () => {
             .catch((err) => {
                 setStatus(Status.Error);
                 setTopics([]);
-                shutdownLogger();
+                resetEverything();
                 console.error("Error fetching topics: ", err);
             });
     };
@@ -67,8 +68,19 @@ const Sidebar: React.FC = () => {
 
     const logDirPrefixInputRef = useRef<HTMLInputElement>(null);
 
-    const shutdownLogger = () => {
-        // TODO: shutdown logger
+    const history = useHistory();
+    const resetEverything = () => {
+        axios
+            .post("/stop-everything")
+            .then((_res) => {
+                setTopics([]);
+                setStatus(Status.NotConnected);
+                setLoggerStatus(false);
+                history.push("/");
+            })
+            .catch((err) => {
+                alert("Stop failed: " + err);
+            });
     };
 
     const startLogger = () => {
@@ -138,6 +150,9 @@ const Sidebar: React.FC = () => {
                     placeholder="log dir prefix (default is date)"
                     ref={logDirPrefixInputRef}
                 ></input>
+
+                <br></br>
+                <button onClick={resetEverything}>stop</button>
             </div>
 
             <div className="sidebar-child config-help-container">
