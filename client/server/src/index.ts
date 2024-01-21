@@ -10,6 +10,7 @@ import {
     getTopicData,
     stopLogger,
     getLoggerStatus,
+    getAllTopicData,
 } from "./logger";
 
 const express = require("express");
@@ -77,6 +78,20 @@ app.get("/logger-status", async (req: Request, res: Response) => {
         res.status(200).send(ls);
     } catch (err) {
         res.status(500).send("Error getting logger status.");
+    }
+});
+
+app.get("/get-all-topic-data", async (req: Request, res: Response) => {
+    const topic = req.query.topic;
+    if (typeof topic === "string") {
+        try {
+            const allTopicData = await getAllTopicData(topic);
+            res.send(allTopicData);
+        } catch (err) {
+            res.status(500).send("Error reading topic data.");
+        }
+    } else {
+        res.status(400).send("Invalid topic parameter.");
     }
 });
 

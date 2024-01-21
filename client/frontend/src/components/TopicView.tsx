@@ -22,6 +22,9 @@ interface ChartData {
     datasets: any[];
 }
 
+let red = 255;
+let blue = 132;
+
 const TopicView: React.FC<TopicViewProps> = (props) => {
     const [startTime, setStartTime] = useState<number>();
     const [labels, setLabels] = useState<string[]>([]);
@@ -37,59 +40,81 @@ const TopicView: React.FC<TopicViewProps> = (props) => {
         setLabels(["0s"]);
     };
 
-    const updateLabels = (topicData: string) => {
-        if (startTime === undefined) return;
-        const newTime: number = parseInt(topicData.split("\t")[0]);
-        const humanReadableTime: string = formatTimeDifference(
-            startTime,
-            newTime
-        );
-        setLabels((prevLabels) => {
-            const updatedLabels = [...prevLabels, humanReadableTime];
-            return updatedLabels;
-        });
+    useEffect(() => {
+        axios
+            .get("/logger-status")
+            .then((res) => {
+                setLoggerStatus(res.data);
+            })
+            .catch((_err) => {
+                console.log("Error fetching logger status.");
+            });
+    }, []);
+
+    const updateLabels = (topicData: string, startTime: number) => {
+        const newTime = parseInt(topicData.split("\t")[0]);
+        const humanReadableTime = formatTimeDifference(startTime, newTime);
+        return humanReadableTime;
     };
 
-    const updateChartData = (topicData: string) => {
-        const topicDataSplit: string[] = topicData.split("\t").slice(1);
+    const updateChartData = (
+        topicData: string,
+        prevChartData: any,
+        labels: string[]
+    ) => {
+        const topicDataSplit = topicData.split("\t").slice(1);
+        let prevData = prevChartData.datasets.slice();
 
-        setChartData((prevChartData) => {
-            let prevData = prevChartData.datasets.slice();
+        for (let i = 0; i < topicDataSplit.length; i++) {
+            const singleDataValue = parseFloat(topicDataSplit[i]);
 
-            for (let i = 0; i < topicDataSplit.length; i++) {
-                const singleDataValue: number = parseFloat(topicDataSplit[i]);
-
-                if (prevData.length < topicDataSplit.length) {
-                    prevData.push({
-                        label: String(i),
-                        data: [singleDataValue],
-                        borderColor: "rgb(255, 99, 132)",
-                        backgroundColor: "rgba(255, 99, 132, 0.5)",
-                    });
-                } else {
-                    prevData[i].data.push(singleDataValue);
-                }
+            if (prevData.length < topicDataSplit.length) {
+                prevData.push({
+                    label: String(i),
+                    data: [singleDataValue],
+                    borderColor: `rgb(${red}, 99, ${blue})`,
+                    backgroundColor: `rgba(${red}, 99, ${blue}, 0.5)`,
+                });
+                red -= 50;
+                blue += 50;
+            } else {
+                prevData[i].data.push(singleDataValue);
             }
+        }
+        red = 255;
+        blue = 132;
 
-            return {
-                labels: labels,
-                datasets: prevData,
-            };
-        });
+        return {
+            labels: labels,
+            datasets: prevData,
+        };
     };
 
     useEffect(() => {
         const getTopicData = () => {
             axios
-                .get("/get-topic-data", {
-                    params: {
-                        topic: props.topic,
-                    },
+                .get("/get-all-topic-data", {
+                    params: { topic: props.topic },
                 })
                 .then((res) => {
-                    updateStartTime(parseInt(res.data.split("\t")[0]));
-                    updateLabels(res.data);
-                    updateChartData(res.data);
+                    const allData = res.data;
+                    const initialTime = parseInt(allData[0].split("\t")[0]);
+                    setStartTime(initialTime);
+
+                    let newLabels: string[] = [];
+                    let newChartData: any = { labels: [], datasets: [] };
+
+                    allData.forEach((dataElement: string) => {
+                        newLabels.push(updateLabels(dataElement, initialTime));
+                        newChartData = updateChartData(
+                            dataElement,
+                            newChartData,
+                            newLabels
+                        );
+                    });
+
+                    setLabels(newLabels);
+                    setChartData(newChartData);
                 })
                 .catch((_err) => {
                     alert("Error reading topic.");
@@ -99,18 +124,7 @@ const TopicView: React.FC<TopicViewProps> = (props) => {
         const interval = setInterval(getTopicData, LATENCY);
 
         return () => clearInterval(interval);
-    }, [props.topic, chartData.labels]);
-
-    useEffect(() => {
-        axios
-            .get("/logger-status")
-            .then((res) => {
-                setLoggerStatus(res.data);
-            })
-            .catch((err) => {
-                console.log("Error fetching logger status.");
-            });
-    });
+    }, [props.topic]);
 
     return (
         <div className="viewer">
